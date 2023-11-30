@@ -10,8 +10,8 @@ import glob
 import json
 import requests
 
-path = '/data/feedback/'
-req_url = 'http://34.16.40.146/feedback/'
+path = 'data/feedback/'
+req_url = 'http://127.0.0.1:8000/feedback/'
 
 def post_data(data):
     print(type(data))

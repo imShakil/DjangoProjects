@@ -35,6 +35,8 @@ jobs:
           command: |
             . venv/bin/activate
             cd pollsapi
+            python --version
+            ls -la
             python manage.py test
 
       - store_artifacts:

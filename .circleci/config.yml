@@ -1,73 +1,42 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:node:django-todo-react/todo-react,deps:python:.,file:manage.py:pollsapi,package_manager:pipenv:django-todo-react
-version: 2.1
-orbs:
-  node: circleci/node@5
-  python: circleci/python@2
+version: 2
 jobs:
-  test-node:
-    # Install node dependencies and run tests
-    executor: node/default
-    working_directory: ~/project/django-todo-react/todo-react
-    steps:
-      - checkout:
-          path: ~/project
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Run tests
-          command: npm test --passWithNoTests
-  build-node:
-    # Build node project
-    executor: node/default
-    working_directory: ~/project/django-todo-react/todo-react
-    steps:
-      - checkout:
-          path: ~/project
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          command: npm run build
-      - run:
-          name: Create the ~/artifacts directory if it doesn't exist
-          command: mkdir -p ~/artifacts
-      # Copy output to artifacts dir
-      - run:
-          name: Copy artifacts
-          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
-      - store_artifacts:
-          path: ~/artifacts
-          destination: node-build
-  test-python:
-    # Install dependencies and run tests
+  build:
     docker:
-      - image: cimg/python:3.12-node
+      # specify the version you desire here
+      - image: circleci/python:3.6.1
+
+
+    working_directory: ~/repo
+
     steps:
       - checkout
-      - python/install-packages:
-          args: --dev
-          pkg-manager: pipenv
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pollsapi/requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
       - run:
-          name: Run tests
-          command: pipenv run python manage.py test
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r pollsapi/requirements.txt
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
-workflows:
-  build-and-test:
-    jobs:
-      - test-node
-      - build-node:
-          requires:
-            - test-node
-            - test-python
-      - test-python
-    # - deploy:
-    #     requires:
-    #       - build-node
+          name: run tests
+          command: |
+            . venv/bin/activate
+            cd pollsapi
+            python manage.py test
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports

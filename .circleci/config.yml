@@ -1,0 +1,73 @@
+# This config was automatically generated from your source code
+# Stacks detected: deps:node:django-todo-react/todo-react,deps:python:.,file:manage.py:pollsapi,package_manager:pipenv:django-todo-react
+version: 2.1
+orbs:
+  node: circleci/node@5
+  python: circleci/python@2
+jobs:
+  test-node:
+    # Install node dependencies and run tests
+    executor: node/default
+    working_directory: ~/project/django-todo-react/todo-react
+    steps:
+      - checkout:
+          path: ~/project
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Run tests
+          command: npm test --passWithNoTests
+  build-node:
+    # Build node project
+    executor: node/default
+    working_directory: ~/project/django-todo-react/todo-react
+    steps:
+      - checkout:
+          path: ~/project
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          command: npm run build
+      - run:
+          name: Create the ~/artifacts directory if it doesn't exist
+          command: mkdir -p ~/artifacts
+      # Copy output to artifacts dir
+      - run:
+          name: Copy artifacts
+          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+      - store_artifacts:
+          path: ~/artifacts
+          destination: node-build
+  test-python:
+    # Install dependencies and run tests
+    docker:
+      - image: cimg/python:3.12-node
+    steps:
+      - checkout
+      - python/install-packages:
+          args: --dev
+          pkg-manager: pipenv
+      - run:
+          name: Run tests
+          command: pipenv run python manage.py test
+  deploy:
+    # This is an example deploy job, not actually used by the workflow
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Replace this with steps to deploy to users
+      - run:
+          name: deploy
+          command: '#e.g. ./deploy.sh'
+workflows:
+  build-and-test:
+    jobs:
+      - test-node
+      - build-node:
+          requires:
+            - test-node
+            - test-python
+      - test-python
+    # - deploy:
+    #     requires:
+    #       - build-node

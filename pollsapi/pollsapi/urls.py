@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from rest_framework.documentation import include_docs_urls
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     re_path(r'^', include('polls.urls')),
+    path(r'swagger/', include_docs_urls(title='Polls Api')),
 ]

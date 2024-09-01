@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "polls",
     "rest_framework",
+    "rest_framework_swagger",
     "rest_framework.authtoken",
 ]
 
@@ -132,5 +133,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_SCHEMA_CLASS': (
+        'rest_framework.schemas.coreapi.AutoSchema'
     )
 }

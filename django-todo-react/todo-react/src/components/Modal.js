@@ -28,7 +28,7 @@ export default class CustomModal extends Component {
         const activeItem = { ...this.state.activeItem, [name]: value };
         this.setState({ activeItem });
     };
-    
+
     render() {
         const { toggle, onSave } = this.props;
         return (

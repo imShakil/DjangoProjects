@@ -1,9 +1,9 @@
 
 #!/usr/bin/env python3
 
-#############################   
-## author: imShakil@github ##   
-#############################  
+#############################
+## author: imShakil@github ##
+#############################
 
 import os
 import glob

@@ -13,7 +13,7 @@ def snippet_list(request):
         serializers = SnippetSerializer(snippets, many=True)
         print(serializers)
         return Response(serializers.data)
-    
+
     elif request.method == 'POST':
         serializer = SnippetSerializer(data=request.data)
         if serializer.is_valid():
@@ -33,7 +33,7 @@ def snippet_detail(request, pk):
         snippet = Snippet.objects.get(pk=pk)
     except Snippet.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
-    
+
     if request.method == 'GET':
         serializer = SnippetSerializer(snippet)
         return Response(serializer.data)

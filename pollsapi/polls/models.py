@@ -25,5 +25,3 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ("poll", "voted_by")
-
-

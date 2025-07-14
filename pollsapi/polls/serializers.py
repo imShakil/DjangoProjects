@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
-    
+
     def create(self, validated_data):
         user = User (
             email = validated_data['email'],
@@ -45,4 +45,3 @@ class PollsSerilizer(serializers.ModelSerializer):
     class Meta:
         model = Poll
         fields = '__all__'
-
